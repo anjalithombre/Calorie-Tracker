@@ -1,0 +1,121 @@
+{% extends "myapp/base.html" %}
+{% block title %}Calorie Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <br>
+        <h4>Calorie Goal</h4>
+        <br>
+        <div class="row">
+            <div class="col-md-9 offset-1">
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food selection form -->
+        <div class="row">
+            <div class="col-md-12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group row mt-3">
+                        <label class="col-md-2"><b>Select Food To Add</b></label>
+                        <select class="col-md-6 form-control" name="food_consumed" id="food_consumed">
+                            {% for food in foods %}
+                                <option value="{{ food.name }}">{{ food.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-success" type="submit">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Consumption table -->
+        <div class="row">
+            <div class="col-md-7">
+                <h4 id="todays-consumption">Today's Consumption</h4>
+                <table id="table" class="table table-striped table-primary">
+                    <tr class="bg-primary text-white">
+                        <th>Food item</th>
+                        <th>Carbs (gm)</th>
+                        <th>Protein (gm)</th>
+                        <th>Fats (gm)</th>
+                        <th>Calories (cal)</th>
+                        <th>Remove Item</th>
+                    </tr>
+                    {% for c in consumed_food %}
+                    <tr>
+                        <td>{{ c.food_consumed.name }}</td>
+                        <td>{{ c.food_consumed.carbohydrates }}</td>
+                        <td>{{ c.food_consumed.protein }}</td>
+                        <td>{{ c.food_consumed.fat }}</td>
+                        <td>{{ c.food_consumed.calories }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'delete' c.id %}"
+                                  onsubmit="return confirm('Are you sure you want to delete this item?');"
+                                  style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">X</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td><b>Total</b></td>
+                        <td id="totalCarbs"><b></b></td>
+                        <td id="totalProtein"><b></b></td>
+                        <td id="totalFats"><b></b></td>
+                        <td id="totalCalories"><b></b></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Macronutrient breakdown -->
+            <div class="col-md-5">
+                <h4 id="todays-breakdown">Today's Breakdown</h4>
+                <div class="card-header text-white bg-primary">
+                    <h4>Macronutrients Breakdown</h4>
+                </div>
+                <div class="col-md-12">
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ... all your code here ...
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Carbs ' + carbsP + '%', 'Protein ' + proteinP + '%', 'Fats ' + fatsP + '%'],
+            datasets: [{
+                data: [carbsP, proteinP, fatsP],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+});   // ✅ closes the function
+</script>
+{% endblock %}

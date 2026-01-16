@@ -1,0 +1,38 @@
+{% extends "myapp/base.html" %}
+{% block title %}Update Food Item{% endblock %}
+{% block content %}
+    <h2>Update Food Item</h2>
+
+    <!-- Show error message if duplicate or invalid -->
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ food.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="calories">Calories</label>
+            <input type="number" step="any" class="form-control" id="calories" name="calories" value="{{ food.calories }}" required>
+        </div>
+        <div class="form-group">
+            <label for="protein">Protein</label>
+            <input type="number" step="any" class="form-control" id="protein" name="protein" value="{{ food.protein }}" required>
+        </div>
+        <div class="form-group">
+            <label for="fat">Fat</label>
+            <input type="number" step="any" class="form-control" id="fat" name="fat" value="{{ food.fat }}" required>
+        </div>
+        <div class="form-group">
+            <label for="carbohydrates">Carbohydrates</label>
+            <input type="number" step="any" class="form-control" id="carbohydrates" name="carbohydrates" value="{{ food.carbohydrates }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'food_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}

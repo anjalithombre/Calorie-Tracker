@@ -1,0 +1,79 @@
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 40px auto;
+    }
+    .logo-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+    .logo-text {
+        font-weight: bold;
+        font-size: 1.25rem;
+        color: #343a40;
+    }
+    .auth-card {
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        background-color: #84e471;
+    }
+    .auth-card h2 {
+        margin-bottom: 25px;
+        font-weight: 700;
+        color:  #000000 ;
+        text-align: center;
+    }
+    .form-control {
+        margin-bottom: 15px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    .btn-primary {
+        width: 100%;
+        font-weight: 600;
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #004085;
+    }
+    .register-link {
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .register-link a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="logo-header">
+        <img src="https://cdn2.iconfinder.com/data/icons/custom-ios-14-1/60/Activity-1024.png" alt="Calorie Tracker Logo" class="logo-img">
+        <span class="logo-text">Calorie Tracker</span>
+    </div>
+    <div class="auth-card">
+        <h2>Login</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <p class="register-link">Don't have an account? <a href="{% url 'register' %}">Create new account</a></p>
+    </div>
+</div>
+{% endblock %}

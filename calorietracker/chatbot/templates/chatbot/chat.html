@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chatbox { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+        #userInput { width: 80%; }
+        .typing { font-style: italic; color: gray; }
+    </style>
+</head>
+<body>
+    <h2>Chatbot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type a food item only...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+    function sendMessage() {
+        const message = document.getElementById("userInput").value;
+        const chatbox = document.getElementById("chatbox");
+
+        // Show user message
+        chatbox.innerHTML += "<p><b>You:</b> " + message + "</p>";
+
+        // Show typing indicator
+        const typingIndicator = document.createElement("p");
+        typingIndicator.className = "typing";
+        typingIndicator.innerText = "Bot is typing...";
+        chatbox.appendChild(typingIndicator);
+        document.getElementById("userInput").placeholder = "Type a food item only...";
+        // Send request to backend
+        fetch("/chatbot/chat/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({message: message})
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove typing indicator
+            typingIndicator.remove();
+
+            // Show bot response
+            chatbox.innerHTML += "<p><b>Bot:</b> " + data.response + "</p>";
+            document.getElementById("userInput").value = "";
+            chatbox.scrollTop = chatbox.scrollHeight; // auto-scroll
+        });
+    }
+    </script>
+</body>
+</html>

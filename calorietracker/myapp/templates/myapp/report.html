@@ -1,0 +1,86 @@
+{% extends "myapp/base.html" %}
+{% block title %}Report{% endblock %}
+{% block content %}
+<h2>Report</h2>
+
+<a href="{% url 'report_pdf' %}" class="btn btn-primary mb-3">Download PDF</a>
+
+<h3>Day-wise Report (Last 30 days)</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Total Calories</th>
+            <th>Total Protein (gm)</th>
+            <th>Total Fat (gm)</th>
+            <th>Total Carbs (gm)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for day in day_data %}
+        <tr>
+            <td>{{ day.day|date:"Y-m-d" }}</td>
+            <td>{{ day.total_calories|default:"0" }}</td>
+            <td>{{ day.total_protein|default:"0" }}</td>
+            <td>{{ day.total_fat|default:"0" }}</td>
+            <td>{{ day.total_carbs|default:"0" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No data available</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Week-wise Report (Last 4 weeks)</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Week Starting</th>
+            <th>Total Calories</th>
+            <th>Total Protein (gm)</th>
+            <th>Total Fat (gm)</th>
+            <th>Total Carbs (gm)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in week_data %}
+        <tr>
+            <td>{{ week.week|date:"Y-m-d" }}</td>
+            <td>{{ week.total_calories|default:"0" }}</td>
+            <td>{{ week.total_protein|default:"0" }}</td>
+            <td>{{ week.total_fat|default:"0" }}</td>
+            <td>{{ week.total_carbs|default:"0" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No data available</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Month-wise Report (Last 1 month)</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Total Calories</th>
+            <th>Total Protein (gm)</th>
+            <th>Total Fat (gm)</th>
+            <th>Total Carbs (gm)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for month in month_data %}
+        <tr>
+            <td>{{ month.month|date:"Y-m" }}</td>
+            <td>{{ month.total_calories|default:"0" }}</td>
+            <td>{{ month.total_protein|default:"0" }}</td>
+            <td>{{ month.total_fat|default:"0" }}</td>
+            <td>{{ month.total_carbs|default:"0" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No data available</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

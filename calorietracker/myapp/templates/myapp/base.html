@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Calorie Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
+    <style>
+        nav.navbar {
+            background: linear-gradient(to right, #0078D7, #28a745);
+            border: 2px solid #28a745;
+
+        }
+        footer {
+            background-color: #69d3a9;
+            padding: 10px 0;
+            text-align: center;
+            border-top: 1px solid #5cdf60;
+            margin-top: 20px;
+        }
+        footer a {
+            margin: 0 10px;
+            color: inherit;
+        }
+        footer a:hover {
+            text-decoration: none;
+        }
+        footer img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        #chatIcon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0078D7;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        #chatWindow {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            border: 1px solid #ccc;
+            background: white;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        #chatbox { flex: 1; padding: 10px; overflow-y: auto; }
+        #inputArea { display: flex; border-top: 1px solid #ccc; }
+        #userInput { flex: 1; padding: 5px; border: none; }
+        #sendBtn { background: #0078D7; color: white; border: none; padding: 10px; cursor: pointer; }
+        .typing { font-style: italic; color: gray; }
+    </style>
+</head>
+<body style="padding-top: 70px; background: linear-gradient(to right, #f8f9fa, #d4edda);">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-rounded-lg fixed-top">
+        <a class="navbar-brand" href="/">
+            <img src="https://cdn2.iconfinder.com/data/icons/custom-ios-14-1/60/Activity-1024.png" width="30" height="30" class="d-inline-block align-top" alt="Calorie Tracker Logo">
+            <b>Calorie Tracker</b>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item d-flex align-items-center mx-1">
+                    <span class="navbar-text mr-2">Hello, {{ request.user.username }}</span>
+                </li>
+                <li class="nav-item">
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-outline-danger rounded mx-1">Logout</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-primary rounded mx-1" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-success rounded mx-1" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+                {% if request.resolver_match.url_name == 'index' %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-success rounded text-white mx-1" href="#todays-consumption"><b>Today's Report</b></a>
+                </li>
+                {% endif %}
+                {% if request.resolver_match.url_name != 'add_item' and request.resolver_match.url_name != 'food_list' %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-success rounded text-white mx-1" href="{% url 'add_item' %}"><b>Add New Item</b></a>
+                </li>
+                {% endif %}
+                {% if request.resolver_match.url_name != 'food_list' %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-success rounded text-white mx-1" href="{% url 'food_list' %}"><b>Food Items</b></a>
+                </li>
+                {% endif %}
+                {% if request.resolver_match.url_name != 'set_goal' %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-success rounded text-white mx-1" href="{% url 'set_goal' %}"><b>Set Calorie Goal</b></a>
+                </li>
+                {% endif %}
+                {% if request.resolver_match.url_name != 'report' %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-success rounded text-white mx-1" href="{% url 'report' %}"><b>Report</b></a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <a href="" target="_blank" title="LinkedIn">
+            <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+        </a>
+        <a href="https://github.com/Abhinavchoudhary007" target="_blank" title="GitHub">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub">
+        </a>
+    </footer>
+
+    <!-- Floating Chat Icon -->
+    <div id="chatIcon">💬</div>
+
+    <!-- Chat Window -->
+    <div id="chatWindow">
+        <div id="chatbox"></div>
+        <div id="inputArea">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+    const chatIcon = document.getElementById("chatIcon");
+    const chatWindow = document.getElementById("chatWindow");
+    const sendBtn = document.getElementById("sendBtn");
+
+    chatIcon.addEventListener("click", () => {
+        chatWindow.style.display = chatWindow.style.display === "none" ? "flex" : "none";
+    });
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    function sendMessage() {
+        const message = document.getElementById("userInput").value;
+        const chatbox = document.getElementById("chatbox");
+
+        chatbox.innerHTML += "<p><b>You:</b> " + message + "</p>";
+
+        const typingIndicator = document.createElement("p");
+        typingIndicator.className = "typing";
+        typingIndicator.innerText = "Bot is typing...";
+        chatbox.appendChild(typingIndicator);
+
+        fetch("/chatbot/chat/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({message: message})
+        })
+        .then(response => response.json())
+        .then(data => {
+            typingIndicator.remove();
+            chatbox.innerHTML += "<p><b>Bot:</b> " + data.response + "</p>";
+            document.getElementById("userInput").value = "";
+            chatbox.scrollTop = chatbox.scrollHeight;
+        });
+    }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "myapp/base.html" %}
+{% block title %}Food Items List{% endblock %}
+{% block content %}
+    <h2>Food Items</h2>
+    <a href="{% url 'add_item' %}" class="btn btn-primary mb-3">Add New Food Item</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Fat</th>
+                <th>Carbohydrates</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for food in foods %}
+            <tr>
+                <td>{{ food.name }}</td>
+                <td>{{ food.calories }}</td>
+                <td>{{ food.protein }}</td>
+                <td>{{ food.fat }}</td>
+                <td>{{ food.carbohydrates }}</td>
+                <td>
+                    <a href="{% url 'food_update' food.id %}" class="btn btn-warning btn-sm mr-1">Update</a>
+                    <a href="{% url 'food_delete' food.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No food items available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
+{% endblock %}

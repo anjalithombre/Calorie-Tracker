@@ -1,0 +1,102 @@
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 2rem;
+    }
+    .logo-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .logo-img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+    }
+    .logo-text {
+        font-weight: bold;
+        font-size: 1.25rem;
+        color: #343a40;
+    }
+    .auth-card {
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        background-color: #84e471;
+    }
+    .auth-card h2 {
+        margin-bottom: 25px;
+        font-weight: 700;
+        color:   #000000;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 2rem;
+    }
+    .form-control {
+        height: 45px;
+        font-size: 1rem;
+    }
+    .btn-success {
+        width: 100%;
+        font-weight: 600;
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+    .btn-success:hover {
+        background-color: #19692c;
+    }
+    .login-link {
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .login-link a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="logo-header">
+        <img src="https://cdn2.iconfinder.com/data/icons/custom-ios-14-1/60/Activity-1024.png" alt="Calorie Tracker Logo" class="logo-img">
+        <span class="logo-text">Calorie Tracker</span>
+    </div>
+    <div class="auth-card">
+        <h2>Create New Account</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="text-danger small">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="text-danger small">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="text-danger small">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-success">Register</button>
+        </form>
+        <p class="login-link">Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</div>
+{% endblock %}
